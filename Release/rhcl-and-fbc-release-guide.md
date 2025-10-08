@@ -898,7 +898,7 @@ The update process is identical for all operators in their respective supported 
 
 ### Documentation
 
-- **Konflux Docs**: https://konflux.pages.redhat.com/docs/
+- **Konflux Docs**: https://konflux.pages.redhat.com/docs/users
 - **Release Data Repo**: https://gitlab.cee.redhat.com/releng/konflux-release-data
 - **Preparing for Release**: https://konflux.pages.redhat.com/docs/users/releasing/preparing-for-release.html
 - **Releasing Products**: https://konflux.pages.redhat.com/docs/users/releasing/releasing-products.html
