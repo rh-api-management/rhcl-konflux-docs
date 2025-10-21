@@ -645,9 +645,6 @@ The update process is identical for all operators in their respective supported 
    First, set the Release name. Release names follow the pattern: `rhcl-{version}-{component}-{environment}-rhel9`
 
    ```bash
-   # Set the Release name for the operator you want to update
-   RELEASE=rhcl-1-1-1-authorino-prod-rhel9
-
    # Set release and operator parameters
    OPERATOR=limitador-operator
    RELEASE="rhcl-1-1-1-limitador-rc4-prod-rhel9"
