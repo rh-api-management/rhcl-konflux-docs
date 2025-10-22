@@ -645,23 +645,23 @@ The update process is identical for all operators in their respective supported 
    First, set the Release name. Release names follow the pattern: `rhcl-{version}-{component}-{environment}-rhel9`
 
    ```bash
-   # Set the Release name for the operator you want to update
-   RELEASE=rhcl-1-1-1-authorino-prod-rhel9
+   # Set release and operator parameters
+   OPERATOR=limitador-operator
+   RELEASE="rhcl-1-1-1-limitador-rc4-prod-rhel9"
 
-   # Get the snapshot from the Release
-   SNAPSHOT=$(kubectl get releases ${RELEASE} -o jsonpath='{.spec.snapshot}')
-   echo "Snapshot: $SNAPSHOT"
-
-   # Extract bundle URL from snapshot
-   BUNDLE=$(kubectl get snapshot $SNAPSHOT -o yaml | yq e '.spec.components[] | select(.name | test("-operator-bundle$")).containerImage' | head -1)
-   echo "Bundle: $BUNDLE"
+   # Extract bundle URL from release, it has to be the registry.redhat.io one
+   BUNDLE_NAME=rhcl-1-1-${OPERATOR}-bundle
+   BUNDLE_SHASUM=$(kubectl get releases ${RELEASE}  -o yaml | NAME=${BUNDLE_NAME} yq e '.status.artifacts.images[] | select(.name == strenv(NAME)).shasum')
+   BUNDLE_REGISTRY=$(kubectl get releases ${RELEASE}  -o yaml | yq e '.status.artifacts.filtered_snapshot' | NAME=${BUNDLE_NAME}  yq e '.components[] | select(.name == strenv(NAME)).rh-registry-repo')
+   BUNDLE="${BUNDLE_REGISTRY}@${BUNDLE_SHASUM}"
+   echo "Bundle ${BUNDLE}"
    ```
 
 3. **Render Bundle and Update All OCP Catalogs**
    ```bash
    # Render the bundle to a temporary file
    TMPFILE=$(mktemp)
-   opm render $BUNDLE -o yaml > $TMPFILE
+   opm render --migrate ${BUNDLE} -o yaml > $TMPFILE
 
    # Define OCP versions to update
    declare -a ocpversions=("4.16" "4.17" "4.18" "4.19" "4.20")
@@ -669,21 +669,23 @@ The update process is identical for all operators in their respective supported 
    # Loop through each OCP version
    for version in "${ocpversions[@]}"
    do
-      echo "Updating OCP $version"
+      CATALOG_FILE=catalog/$version/$OPERATOR/catalog.yaml
+      echo "Updating catalog file $CATALOG_FILE"
 
       # Add new line and append bundle definition
-      echo "" >> catalog/$version/authorino-operator/catalog.yaml
-      cat $TMPFILE >> catalog/$version/authorino-operator/catalog.yaml
+      echo "" >> ${CATALOG_FILE}
+      cat $TMPFILE >> ${CATALOG_FILE}
 
       # Show existing bundles
       echo "Existing bundles in OCP $version:"
-      yq e 'select(.schema == "olm.bundle").name' catalog/$version/authorino-operator/catalog.yaml
+      yq e 'select(.schema == "olm.bundle").name' ${CATALOG_FILE}
 
       # Add channel entry with "replaces" semantics
-      yq eval --inplace '(select(.schema == "olm.channel" and .name == "stable").entries) += {"name": "authorino-operator.v1.2.0", "replaces": "authorino-operator.v1.1.0"}' catalog/$version/authorino-operator/catalog.yaml
+      REPLACE=${OPERATOR}.v1.1.0
+      NAME="${OPERATOR}.v1.1.1" REPLACE=${REPLACE} yq eval --inplace '(select(.schema == "olm.channel").entries) += {"name": strenv(NAME), "replaces": strenv(REPLACE)}' $CATALOG_FILE
 
       # Validate the updated catalog
-      opm validate catalog/$version/authorino-operator
+      opm validate catalog/$version/${OPERATOR}
    done
 
    # Clean up
