@@ -13,20 +13,6 @@ The guide is designed for team members new to Konflux and includes:
 
 ---
 
-## Table of Contents
-
-1. [What is Konflux?](#what-is-konflux)
-2. [Key Terminology](#key-terminology)
-3. [RHCL Application Architecture](#rhcl-application-architecture)
-4. [Understanding the Release Process](#understanding-the-release-process)
-5. [Prerequisites](#prerequisites)
-6. [Step-by-Step: Releasing RHCL Components](#step-by-step-releasing-rhcl-components)
-7. [Step-by-Step: Releasing the File-Based Catalog](#step-by-step-releasing-the-file-based-catalog)
-8. [Troubleshooting](#troubleshooting)
-9. [Additional Resources](#additional-resources)
-
----
-
 ## What is Konflux?
 
 **Konflux** (formerly known as Red Hat Trusted Application Pipeline or RHTAP) is Red Hat's modern CI/CD platform for building, testing, and releasing containerized applications. It provides:
@@ -71,6 +57,7 @@ For RHCL, Konflux manages:
 | **Service Account** | Kubernetes service account with credentials for pushing to registries or indexes. Different accounts are used for staging vs. production. |
 | **Pyxis** | Red Hat's container registry metadata service. Delivery repositories must be defined in Pyxis before releasing. |
 | **Constraints** | JSON Schema validation rules that restrict what values can be used in ReleasePlanAdmissions (e.g., allowed registries, policies). |
+| **CPE** | A CPE (Common Platform Enumeration) is a Red Hat identifier assigned to a particular product including product version. [More info](https://spaces.redhat.com/pages/viewpage.action?pageId=99849176&spaceKey=PRODSEC&title=CPE) The CPE example for RHCL is: `cpe:/a:redhat:connectivity_link:1::el9` |
 
 ---
 
@@ -87,111 +74,117 @@ Applications follow the naming convention: `rhcl-{version}-{operator-name}`
 
 ### Applications in Konflux
 
-1. rhcl-{version}-authorino
+1. rhcl-{version}-authorino-operator
 2. rhcl-{version}-dns-operator
-3. rhcl-{version}-limitador
+3. rhcl-{version}-limitador-operator
 4. rhcl-{version}-rhcl-operator
 5. rhcl-file-based-catalog
 
 ---
 
-### Example: RHCL 1.1 Applications
+### Example: RHCL 1.3 Applications
 
 The following structure applies to **all RHCL versions** (1.1, 1.2, etc.). Only the version number in the application/component names changes.
 
 **Note**: All operator bundle components (production, dev, and stage) use the same source repository and branch as their corresponding operator.
 
-#### **rhcl-1-1-authorino** (5 components)
-Authorization service for RHCL 1.1
+#### **rhcl-1-3-authorino-operator** (5 components)
+Authorization service for RHCL 1.3
 
 **Components:**
-1. `rhcl-1-1-authorino` - Authorino container image
+1. `rhcl-1-3-authorino` - Authorino container image
    - Source: `https://github.com/rh-api-management/authorino-product-build`
-   - Branch: `rhcl-1.1`
+   - Branch: `rhcl-1.3`
    - Containerfile: `Containerfile.authorino`
 
-2. `rhcl-1-1-authorino-operator` - Authorino operator
+2. `rhcl-1-3-authorino-operator` - Authorino operator
    - Source: `https://github.com/rh-api-management/authorino-operator-product-build`
-   - Branch: `rhcl-1.1`
+   - Branch: `rhcl-1.3`
    - Containerfile: `Containerfile.authorino-operator`
 
-3. `rhcl-1-1-authorino-operator-bundle` - Production bundle
+3. `rhcl-1-3-authorino-operator-bundle` - Production bundle
    - Containerfile: `Containerfile.authorino-operator-bundle`
 
-4. `rhcl-1-1-authorino-operator-bundle-dev` - Development bundle
+4. `rhcl-1-3-authorino-operator-bundle-dev` - Development bundle
    - Containerfile: `Containerfile.authorino-operator-bundle-dev`
 
-5. `rhcl-1-1-authorino-operator-bundle-stage` - Staging bundle
+5. `rhcl-1-3-authorino-operator-bundle-stage` - Staging bundle
    - Containerfile: `Containerfile.authorino-operator-bundle-stage`
 
-#### **rhcl-1-1-dns-operator** (4 components)
-DNS management operator for RHCL 1.1
+#### **rhcl-1-3-dns-operator** (4 components)
+DNS management operator for RHCL 1.3
 
 **Components:**
-1. `rhcl-1-1-dns-operator` - DNS operator container
+1. `rhcl-1-3-dns-operator` - DNS operator container
    - Source: `https://github.com/rh-api-management/dns-operator-product-build`
-   - Branch: `rhcl-1.1`
+   - Branch: `rhcl-1.3`
    - Containerfile: `Containerfile.dns-operator`
 
-2. `rhcl-1-1-dns-operator-bundle` - Production bundle
-3. `rhcl-1-1-dns-operator-bundle-dev` - Development bundle
-4. `rhcl-1-1-dns-operator-bundle-stage` - Staging bundle
+2. `rhcl-1-3-dns-operator-bundle` - Production bundle
+3. `rhcl-1-3-dns-operator-bundle-dev` - Development bundle
+4. `rhcl-1-3-dns-operator-bundle-stage` - Staging bundle
 
-#### **rhcl-1-1-limitador** (5 components)
-Rate limiting service for RHCL 1.1
+#### **rhcl-1-3-limitador** (5 components)
+Rate limiting service for RHCL 1.3
 
 **Components:**
-1. `rhcl-1-1-limitador` - Limitador container
+1. `rhcl-1-3-limitador` - Limitador container
    - Source: `https://github.com/rh-api-management/limitador-product-build`
-   - Branch: `rhcl-1.1`
+   - Branch: `rhcl-1.3`
    - Containerfile: `Containerfile.limitador`
 
-2. `rhcl-1-1-limitador-operator` - Limitador operator
+2. `rhcl-1-3-limitador-operator` - Limitador operator
    - Source: `https://github.com/rh-api-management/limitador-operator-product-build`
-   - Branch: `rhcl-1.1`
+   - Branch: `rhcl-1.3`
    - Containerfile: `Containerfile.limitador-operator`
 
-3. `rhcl-1-1-limitador-operator-bundle` - Production bundle
-4. `rhcl-1-1-limitador-operator-bundle-dev` - Development bundle
-5. `rhcl-1-1-limitador-operator-bundle-stage` - Staging bundle
+3. `rhcl-1-3-limitador-operator-bundle` - Production bundle
+4. `rhcl-1-3-limitador-operator-bundle-dev` - Development bundle
+5. `rhcl-1-3-limitador-operator-bundle-stage` - Staging bundle
 
-#### **rhcl-1-1-rhcl-operator** (6 components)
-Main RHCL operator for RHCL 1.1
+#### **rhcl-1-3-rhcl-operator** (8 components)
+Main RHCL operator for RHCL 1.3
 
 **Components:**
-1. `rhcl-1-1-rhcl-console-plugin` - OpenShift console plugin
+1. `rhcl-1-3-rhcl-console-plugin` - OpenShift console plugin
    - Source: `https://github.com/rh-api-management/rhcl-console-plugin-product-build`
-   - Branch: `rhcl-1.1`
+   - Branch: `rhcl-1.3`
    - Containerfile: `Containerfile.console-plugin`
-
-2. `rhcl-1-1-rhcl-operator` - RHCL operator
+2. `rhcl-1-3-rhcl-console-plugin-0-1-5` - OpenShift console plugin v0.1.5 release stream
+   - Source: `https://github.com/rh-api-management/rhcl-console-plugin-product-build`
+   - Branch: `rhcl-1.3`
+   - Containerfile: `Containerfile.console-plugin-0.1.5`
+3. `rhcl-1-3-developer-portal-controller` - RHCL developer portal controller
+   - Source: `https://github.com/rh-api-management/developer-portal-controller-product-build`
+   - Branch: `rhcl-1.3`
+   - Containerfile: `Containerfile.developer-portal-controller`
+4. `rhcl-1-3-rhcl-operator` - RHCL operator
    - Source: `https://github.com/rh-api-management/rhcl-operator-product-build`
-   - Branch: `rhcl-1.1`
+   - Branch: `rhcl-1.3`
    - Containerfile: `Containerfile.rhcl-operator`
-
-3. `rhcl-1-1-rhcl-operator-bundle` - Production bundle
-4. `rhcl-1-1-rhcl-operator-bundle-dev` - Development bundle
-5. `rhcl-1-1-rhcl-operator-bundle-stage` - Staging bundle
-6. `rhcl-1-1-wasm-shim` - WebAssembly shim
+5. `rhcl-1-3-rhcl-operator-bundle` - Production bundle
+6. `rhcl-1-3-rhcl-operator-bundle-dev` - Development bundle
+7. `rhcl-1-3-rhcl-operator-bundle-stage` - Staging bundle
+8. `rhcl-1-3-wasm-shim` - WebAssembly shim
    - Source: `https://github.com/rh-api-management/wasm-shim-product-build/`
-   - Branch: `rhcl-1.1`
+   - Branch: `rhcl-1.3`
    - Containerfile: `Containerfile.wasm-shim`
 
 ---
 
-### RHCL 1.2 and Future Versions
+### RHCL Future Versions
 
-**The exact same structure applies to all RHCL versions.** When creating RHCL 1.2:
+**The exact same structure applies to all RHCL versions.** When creating RHCL 1.(X+1):
 
-1. Create 4 new applications: `rhcl-1-2-authorino`, `rhcl-1-2-dns-operator`, `rhcl-1-2-limitador`, `rhcl-1-2-rhcl-operator`
-2. Create version-specific branches in each repository: `rhcl-1.2`
-3. Create the same components, just with `1-2` in the names instead of `1-1`
+1. Create 4 new applications: `rhcl-1-(X+1)-authorino-operator`, `rhcl-1-(X+1)-dns-operator`, `rhcl-1-(X+1)-limitador-operator`, `rhcl-1-(X+1)-rhcl-operator`
+2. Create version-specific branches in each repository: `rhcl-1.(X+1)`
+3. Create the same components, just with `1-X(+1)` in the names instead of `1-X`
 
 ---
 
 #### File-Based Catalog Application
 
-##### 9. **rhcl-file-based-catalog** (8 components)
+##### 9. **rhcl-file-based-catalog**
 Contains FBC components for publishing operator metadata to OpenShift OperatorHub indexes.
 
 **Components (one per OCP version):**
@@ -201,10 +194,11 @@ Contains FBC components for publishing operator metadata to OpenShift OperatorHu
 4. `rhcl-file-based-catalog-4-17` - OCP 4.17 catalog
 5. `rhcl-file-based-catalog-4-18` - OCP 4.18 catalog
 6. `rhcl-file-based-catalog-4-19` - OCP 4.19 catalog
-8. `rhcl-file-based-catalog-4-20` - OCP 4.20 catalog
+7. `rhcl-file-based-catalog-4-20` - OCP 4.20 catalog
+8. `rhcl-file-based-catalog-4-21` - OCP 4.21 catalog
 
 **Source:** `https://github.com/rh-api-management/rhcl-file-based-catalog`
-**Containerfiles:** `{version}.Containerfile` (e.g., `4.19.Containerfile`)
+**Containerfiles:** `{version}.Containerfile` (e.g., `4.21.Containerfile`)
 
 ---
 
@@ -231,7 +225,8 @@ The RHCL release process follows this high-level flow:
 - Each component is built using its Containerfile
 - Dependencies are prefetched using Cachi2 (Go modules, RPMs, pip packages)
 - Images are built hermetically (network-isolated for reproducibility)
-- Built images are pushed to `quay.io/redhat-user-workloads/api-management-tenant/`
+- Built images are pushed to `quay.io/redhat-user-workloads/api-management-tenant/` and can be accessed from `image-rbac-proxy.apps.stone-prd-rh01.pg1f.p1.openshiftapps.com`
+  - Registry login information can be found in `Component Details` page of the Konflux web application.
 
 ### 2. **Test & Scan Phase**
 - Enterprise Contract validation runs against built images
@@ -290,6 +285,7 @@ Before releasing RHCL, ensure you have:
 
 ### Configuration Files
 4. **ReleasePlanAdmissions (RPAs)**
+   - Must be created per release basis.
    - Located in [`releng/konflux-release-data/config/stone-prd-rh01.pg1f.p1/product/ReleasePlanAdmission/api-management/`](https://gitlab.cee.redhat.com/releng/konflux-release-data/-/tree/main/config/stone-prd-rh01.pg1f.p1/product/ReleasePlanAdmission/api-management)
    - Files follow naming pattern: `rhcl-{version}-{component}-{environment}-rhel9.yaml`
    - Examples:
@@ -308,6 +304,17 @@ Before releasing RHCL, ensure you have:
    - Located in: [`releng/konflux-release-data/constraints/product/api-management.yaml`](https://gitlab.cee.redhat.com/releng/konflux-release-data/-/blob/main/constraints/product/api-management.yaml)
    - Validates RPA values (registries, tags, policies)
 
+7. **Jira issue to track productization tasks**
+   - Must be created per release basis
+   - Triggers "Test Plan" jira issue for the same release.
+   - Has the following subtasks:
+     - "Set up build config for RHCL X.Y.Z": Create applications, components, git branches as described in [RHCL Application Architecture](#rhcl-application-architecture)
+     - "Create releasePlans/releasePlanAdmissions for RHCL X.Y.Z"
+     - "Prepare RC1": Happens after upstream release is available. Create other "Prepare RC N" subtasks as needed when release candidates have bugs. 
+     - "Ship Images and Bundles"
+     - "Ship FBC"
+   - Leave evidences of the work being done in subtasks comments such as link to PR's, MR's or relevant links.
+   - Example issue: [JIRA 704](https://issues.redhat.com/browse/CONNLINK-704)
 
 ---
 
@@ -604,7 +611,6 @@ A file-based catalog is a YAML file (`catalog.yaml`) that defines:
 - **Bundles**: References to operator bundle images
 - **Deprecations**: Deprecated versions or channels
 
-
 ### FBC Architecture for RHCL
 
 RHCL maintains separate FBC components for each supported OCP version:
@@ -622,16 +628,9 @@ Each component contains a `catalog.yaml` file in the `rhcl-file-based-catalog/` 
 
 **Important**: FBC catalogs must be updated for each operator across all supported OCP versions.
 
-**Operator Support by OCP Version:**
-- **OCP 4.14 - 4.15**: Only `authorino-operator`
-- **OCP 4.16+**: All four operators:
-  - `authorino-operator`
-  - `dns-operator`
-  - `limitador-operator`
-  - `rhcl-operator`
+> Note: See [Supported Configurations for Red Hat Connectivity Link](https://access.redhat.com/articles/7092611) for the support matrix
 
 The update process is identical for all operators in their respective supported versions.
-
 
 **Prerequisites**: Complete component releases first (bundles must exist in registry) and install required tools: `kubectl`, `yq`, `opm`
 
