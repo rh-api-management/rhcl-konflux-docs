@@ -57,7 +57,7 @@ For RHCL, Konflux manages:
 | **Service Account** | Kubernetes service account with credentials for pushing to registries or indexes. Different accounts are used for staging vs. production. |
 | **Pyxis** | Red Hat's container registry metadata service. Delivery repositories must be defined in Pyxis before releasing. |
 | **Constraints** | JSON Schema validation rules that restrict what values can be used in ReleasePlanAdmissions (e.g., allowed registries, policies). |
-| **CPE** | A CPE (Common Platform Enumeration) is a Red Hat identifier assigned to a particular product including product version. [More info](https://spaces.redhat.com/pages/viewpage.action?pageId=99849176&spaceKey=PRODSEC&title=CPE) The CPE example for RHCL is: `cpe:/a:redhat:connectivity_link:1::el9` |
+| **CPE** | A CPE (Common Platform Enumeration) is a Red Hat identifier assigned to a particular product including the product version. [More info](https://spaces.redhat.com/pages/viewpage.action?pageId=99849176&spaceKey=PRODSEC&title=CPE) The CPE example for RHCL is: `cpe:/a:redhat:connectivity_link:1::el9` |
 
 ---
 
@@ -174,11 +174,11 @@ Main RHCL operator for RHCL 1.3
 
 ### RHCL Future Versions
 
-**The exact same structure applies to all RHCL versions.** When creating RHCL 1.(X+1):
+**The exact same structure applies to all RHCL versions.** When creating the next RHCL version (e.g., RHCL 1.4 after 1.3):
 
-1. Create 4 new applications: `rhcl-1-(X+1)-authorino-operator`, `rhcl-1-(X+1)-dns-operator`, `rhcl-1-(X+1)-limitador-operator`, `rhcl-1-(X+1)-rhcl-operator`
-2. Create version-specific branches in each repository: `rhcl-1.(X+1)`
-3. Create the same components, just with `1-X(+1)` in the names instead of `1-X`
+1. Create 4 new applications following the pattern: `rhcl-1-{version}-{operator}` (e.g., `rhcl-1-4-authorino-operator`, `rhcl-1-4-dns-operator`, `rhcl-1-4-limitador-operator`, `rhcl-1-4-rhcl-operator`)
+2. Create version-specific branches in each repository: `rhcl-1.{version}` (e.g., `rhcl-1.4`)
+3. Create the same components, updating the version number in the component names
 
 ---
 
@@ -304,16 +304,16 @@ Before releasing RHCL, ensure you have:
    - Located in: [`releng/konflux-release-data/constraints/product/api-management.yaml`](https://gitlab.cee.redhat.com/releng/konflux-release-data/-/blob/main/constraints/product/api-management.yaml)
    - Validates RPA values (registries, tags, policies)
 
-7. **Jira issue to track productization tasks**
+7. **A Jira issue to track productization tasks**
    - Must be created per release basis
-   - Triggers "Test Plan" jira issue for the same release.
+   - Triggers a "Test Plan" Jira issue for the same release.
    - Has the following subtasks:
      - "Set up build config for RHCL X.Y.Z": Create applications, components, git branches as described in [RHCL Application Architecture](#rhcl-application-architecture)
      - "Create releasePlans/releasePlanAdmissions for RHCL X.Y.Z"
-     - "Prepare RC1": Happens after upstream release is available. Create other "Prepare RC N" subtasks as needed when release candidates have bugs. 
+     - "Prepare RC1": Created after the upstream release is available. Create other "Prepare RC N" subtasks as needed when release candidates have bugs.
      - "Ship Images and Bundles"
      - "Ship FBC"
-   - Leave evidences of the work being done in subtasks comments such as link to PR's, MR's or relevant links.
+   - Leave evidence of the work being done in subtask comments such as links to PRs, MRs, or relevant links.
    - Example issue: [JIRA 704](https://issues.redhat.com/browse/CONNLINK-704)
 
 ---
@@ -397,8 +397,7 @@ This section covers releasing operator images and bundles (not FBC).
 
 ### Step 3: Update or Create ReleasePlanAdmission
 
-**Important**: You will need to create a new RPA for each major/minor release of new components. Patch release 
-can reuse existing RPAs
+**Important**: You will need to create a new RPA for each major/minor release of new components. Patch releases can reuse existing RPAs
 
 For existing components with updated versions:
 
@@ -459,7 +458,7 @@ oc get releaseplanadmission rhcl-1-2-rhcl-operator-prod-rhel9 -o yaml
 
 ### Step 5: Create a ReleasePlan
 
-**Important**: You need to create a new ReleasePlan for each new release.
+**Important**: You need to create a new ReleasePlan for each release.
 
 1. **Get an Existing ReleasePlan as Template**
    ```bash
@@ -486,7 +485,7 @@ oc get releaseplanadmission rhcl-1-2-rhcl-operator-prod-rhel9 -o yaml
 
 ### Step 6: Create a Release
 
-1. **Get an Existing Release as Template or use embdeded example**
+1. **Get an Existing Release as Template or use embedded example**
    ```bash
    # List recent releases to find an example
    oc get releases --sort-by=.metadata.creationTimestamp 
