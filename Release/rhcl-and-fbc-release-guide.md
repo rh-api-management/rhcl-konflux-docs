@@ -494,7 +494,9 @@ oc get releaseplanadmission rhcl-1-2-rhcl-operator-prod-rhel9 -o yaml
 
 ### Step 5: Create a ReleasePlan
 
-**Important**: You need to create a new ReleasePlan for each release.
+**Important**: For major and minor releases, you need to create a new ReleasePlan for each release.
+
+For patch releases that don't change the release advisory text, you can re-use an existing ReleasePlan.
 
 1. **Get an Existing ReleasePlan as Template**
    ```bash
