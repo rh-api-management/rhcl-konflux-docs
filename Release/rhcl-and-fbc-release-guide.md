@@ -180,6 +180,41 @@ Main RHCL operator for RHCL 1.3
 2. Create version-specific branches in each repository: `rhcl-1.{version}` (e.g., `rhcl-1.4`)
 3. Create the same components, updating the version number in the component names
 
+#### Creating Resources with Templates
+
+RHCL uses the [Konflux template system](https://konflux-ci.dev/docs/patterns/managing-multiple-versions/) to manage multiple product versions. Templates are defined in [rhcl-konflux-resources](https://github.com/rh-api-management/rhcl-konflux-resources) and should only be updated when necessary.
+
+**To create konflux resources for a new product version:**
+
+1. **Create a ProjectDevelopmentStream** resource in the konflux cluster:
+   ```yaml
+   apiVersion: projctl.konflux.dev/v1beta1
+   kind: ProjectDevelopmentStream
+   metadata:
+     name: rhcl-1-4
+     namespace: api-management-tenant
+   spec:
+     project: rhcl
+     template:
+       name: rhcl-template
+       values:
+         - name: version
+           value: "1-4"
+   ```
+
+2. **Apply the resource:**
+   ```bash
+   oc apply -f project-development-stream.yaml
+   ```
+
+3. **Verify resources were created:**
+   ```bash
+   oc get applications -l projctl.konflux.dev/project-development-stream=rhcl-1-4
+   oc get components -l projctl.konflux.dev/project-development-stream=rhcl-1-4
+   ```
+
+The konflux controller will automatically render applications and components from the templates defined in the repository.
+
 ---
 
 #### File-Based Catalog Application
