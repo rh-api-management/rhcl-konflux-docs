@@ -182,7 +182,8 @@ Main RHCL operator for RHCL 1.3
 
 #### Creating Resources with Templates
 
-RHCL uses the [Konflux template system](https://konflux-ci.dev/docs/patterns/managing-multiple-versions/) to manage multiple product versions. Templates are defined in [rhcl-konflux-resources](https://github.com/rh-api-management/rhcl-konflux-resources) and should only be updated when necessary.
+RHCL uses the [Konflux template system](https://konflux-ci.dev/docs/patterns/managing-multiple-versions/) to manage multiple product versions. Templates are defined in [rhcl-konflux-resources](https://github.com/rh-api-management/rhcl-konflux-resources) and they also exist as living custom resources in the cluster.
+If necessary, the templates must be updated in the repository by opening a pull request and then applied to the cluster.
 
 **To create konflux resources for a new product version:**
 
@@ -213,7 +214,7 @@ RHCL uses the [Konflux template system](https://konflux-ci.dev/docs/patterns/man
    oc get components -l projctl.konflux.dev/project-development-stream=rhcl-1-4
    ```
 
-The konflux controller will automatically render applications and components from the templates defined in the repository.
+The konflux controller will automatically render applications and components from the templates defined in the cluster.
 
 ---
 
