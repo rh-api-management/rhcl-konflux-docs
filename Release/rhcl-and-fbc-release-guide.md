@@ -258,7 +258,7 @@ YOU: add bundles to FBC → release FBC
 
 ### What is still manual
 
-- Deciding which upstream version/RC to ship, and bumping RC-specific changes (e.g. "Bump authorino-operator to v0.25.4 and bundle to 1.4.4 for RHCL 1.4.4-rc1")
+- Bumping the submodules to the upstream tags for this release when the daily bump hasn't already done it
 - Reviewing and merging the daily bump PRs
 - Fixing a build when a nudge PR or generated-manifest commit fails
 - Creating the Release, and all FBC changes
@@ -648,7 +648,7 @@ spec:
 
    **Where to put these fields:** `issues` and `cves` belong **only on the Release**. Do not add them to the ReleasePlan or the RPA. The `konflux-release-data` tests reject them there.
 
-   **Finding the CVEs:** collect them from the Jira issues and the upstream release notes for the versions you are shipping, then look each one up in the Red Hat CVE database (above) to confirm the identifier and severity. A security patch usually has several CVEs, so list all of them.
+   **Finding the CVEs:** collect them from the Jira issues for this release, then look each one up in the Red Hat CVE database (above) to confirm the identifier and severity. A security patch usually has several CVEs, so list all of them.
 
    Use the same `type` and `cves` on the stage Release as on the prod one, so staging exercises the same advisory path.
 
@@ -1049,14 +1049,14 @@ The update process is identical for all operators in their respective supported 
 
 A patch release (e.g. 1.4.4, 1.5.1) ships fixes on an existing stream. It reuses the stream's applications, components, RPAs, and Pyxis repositories, so there is **no new Konflux setup**. Pick the section that matches the stream.
 
-> Patch releases must contain only patch-safe changes (bug and CVE fixes, no new features or API changes). The `kdt:patch-release` skill can check a release branch for this.
+> Each RHCL patch release is the functional equivalent of the matching upstream patch release. This guide covers only how to build and ship it through Konflux, not what the upstream patch contains.
 
 ### Before you start (both streams)
 
 1. Create the Jira productization issue for the patch with its subtasks (see [Prerequisites](#prerequisites)).
    Decide now whether the patch contains security fixes. If it does, collect the CVE identifiers and the Konflux components they affect, because the Release must be an `RHSA` with a `cves` list.
 2. Confirm the stream branch exists and builds are green: `rhcl-1.4` or `rhcl-1.5` in each `*-product-build` repo.
-3. Decide the upstream versions to ship. The daily bump workflow may already have opened PRs; otherwise bump manually.
+3. Identify the upstream patch tags that correspond to this release. The daily bump workflow may already have opened PRs for them; otherwise bump manually.
 
 ### Patch release of 1.4 (separate bundles)
 
