@@ -493,6 +493,12 @@ This section covers releasing operator images and bundles (not FBC).
   - RPA files end with: `-prod-rhel9.yaml`
   - Example: `rhcl-1-5-rhcl-operator-prod-rhel9.yaml`
 
+**Before creating a production Release:**
+
+1. Confirm the staging Release succeeded. Verify its images and tags match the intended Snapshot.
+2. Inform QE that RC builds are available in stage. Work with QE to resolve issues and deliver later RCs as needed.
+3. Release to production after QE sign-off and on the planned release date.
+
 ### Step 3: Update or Create ReleasePlanAdmission
 
 **Important**: RHCL has no new minor versions, so you will not create new RPAs. Each patch release reuses the stream's existing RPAs and only updates their tags.
@@ -608,6 +614,8 @@ spec:
   releasePlan: rhcl-1-4-rhcl-operator-prod
   snapshot: rhcl-1-4-rhcl-operator-rc2
 ```
+
+When populating `issues.fixed`, include Jira issues whose **Fix Version** is the release in progress. The Test Plan may reference the most important issues; use it to cross-check.
 
 2. **Set the advisory type (bug fix vs security)**
 
@@ -1074,7 +1082,7 @@ In 1.4 every operator is released and cataloged on its own, so a patch touches e
    - Run `tox`, then merge. Example MR: [!22121 "Tags for RHCL 1.4.3"](https://gitlab.cee.redhat.com/releng/konflux-release-data/-/merge_requests/22121)
 4. **Release to stage, then prod** for each changed application, following [Steps 5–7](#step-5-create-a-releaseplan). Set the Release `type` to `RHSA` and list the `cves` if the patch has any security fix, otherwise `RHBA` ([Step 6](#step-6-create-a-release)). Reuse the existing ReleasePlans (they live in `rhcl-releaseplans/rhcl-1-4/`); create new ones only if the advisory text must change.
 5. **Update the catalog** with the [`/add-bundle` skill](#step-1-update-fbc-catalog-yaml) ([FBC guide](#step-by-step-releasing-the-file-based-catalog)). For each released operator, add the new bundle to OCP 4.19–4.22 and add it to the **`stable-1.4`** channel (not the old `stable` channel), with `replaces` pointing at the previous 1.4.x. Use the same release you just made as the bundle source. Example: `Add rhcl-operator v1.4.4 to new stable-1.4 channel in OCP 4.19-4.22`.
-6. **Release the FBC** application (stage first, then prod).
+6. **Release the FBC** application to production.
 7. **Verify** the images in Pyxis and the new version in the index ([Step 6: Verify FBC Publication](#step-6-verify-fbc-publication)).
 
 ### Patch release of 1.5 (consolidated through the RHCL operator)
@@ -1100,6 +1108,12 @@ In 1.5 the RHCL operator deploys all component operators from charts built into 
 | Bundles to check | One per changed operator | RHCL operator bundle |
 | RPAs to edit | Per changed component | RHCL operator, changed components, helm charts, dynamic plugin |
 | Catalog entries | One per changed operator, in `stable-1.4` | RHCL operator only, in `stable-1.5` |
+
+### Recovering from release failures
+
+If a Release fails, inspect `status.conditions` and PipelineRun task logs to identify the failed task. Conforma violations and other build issues often require rebuilding affected images with the latest base images and Konflux task references. Create a new Release from the resulting Snapshot.
+
+If published production artifacts must be withdrawn, do not delete the Release or change tags manually. Contact Konflux Releng to coordinate correction or withdrawal.
 
 ### Getting Help
 
