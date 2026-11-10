@@ -270,8 +270,10 @@ YOU: add bundles to FBC → release FBC
 The RHCL release process follows this high-level flow:
 
 ### 1. **Build Phase** (Developer Workspace: `api-management-tenant`)
-- Developer pushes code to GitHub (`rh-api-management` repository)
-- Konflux triggers PipelineRuns based on `.tekton/*.yaml` files
+- Developer pushes code to the upstream Kuadrant repository on GitHub
+- Upstream cuts a release (e.g. tag `v1.5.0`)
+- The upstream tag is pulled into the matching `*-product-build` repository in `rh-api-management` by bumping its submodule (usually done by the daily Submodule Version Bump PR, see [Automation Overview](#automation-overview))
+- When the bump merges, Konflux triggers PipelineRuns based on `.tekton/*.yaml` files
 - Each component is built using its Containerfile
 - Dependencies are prefetched using Cachi2 (Go modules, RPMs, pip packages)
 - Images are built hermetically (network-isolated for reproducibility)
